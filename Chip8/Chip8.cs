@@ -13,7 +13,7 @@ namespace GBEmul8.Chip8
         private byte[] _memory;
         private ushort _PC;
         private ushort _I;
-        private ushort _SP;
+        private Stack<ushort> _SP;
 
         public Chip8()
         {
@@ -22,6 +22,8 @@ namespace GBEmul8.Chip8
 
             // le PC doit demarre a l'instruction 0x200
             _PC = Constantes.OFFSET_PC;
+
+            _SP = new Stack<ushort>();
         }
 
         /*
@@ -42,29 +44,58 @@ namespace GBEmul8.Chip8
 
         public void Start()
         {
-            bool end = false;
-            while (!end)
+            while (_PC < _memory.Length)
             {
                 // Fetch
-                ushort opcode = (ushort)((_memory[_PC] << 8) + _memory[_PC + 1]);        
+                ushort _opcode = (ushort)((_memory[_PC] << 8) + _memory[_PC + 1]);        
                 // Decode 
-                byte _code = (byte)((opcode & 0xF000) >> 12);
-                ushort _NNN = (ushort)(opcode & 0x0FFF);
-                byte _KK = (byte)(opcode & 0x00FF);
-                byte _X = (byte)((opcode & 0x0F00) >> 8);
-                byte _Y = (byte)((opcode & 0x00F0) >> 4);              
+                byte _code = (byte)((_opcode & 0xF000) >> 12);
+                ushort _NNN = (ushort)(_opcode & 0x0FFF);
+                byte _KK = (byte)(_opcode & 0x00FF);
+                byte _X = (byte)((_opcode & 0x0F00) >> 8);
+                byte _Y = (byte)((_opcode & 0x00F0) >> 4);
+                byte _K = (byte)(_opcode & 0x000F);
                 _PC += 2;
+                SystInstructions instr = new SystInstructions(_opcode);
                 // Execute
                 switch(_code)
-                {
-
-
+                {           
+                    case (byte)InstructionsEnum.OPCodeHeaderEnum.SYS:
+                        instr.executeSyst(ref _PC, ref _SP);
+                        break;
+                    case (byte)InstructionsEnum.OPCodeHeaderEnum.JUMP:
+                        instr.Jump_Address(_NNN, ref _PC);
+                        break;
+                    case (byte)InstructionsEnum.OPCodeHeaderEnum.CALL:
+                        instr.Call(_NNN, ref _PC, ref _SP);
+                        break;
+                    case (byte)InstructionsEnum.OPCodeHeaderEnum.SE_CONST:
+                        instr.SE(_V[_X], _KK, ref _PC);
+                        break;
+                    case (byte)InstructionsEnum.OPCodeHeaderEnum.SNE_CONST:
+                        instr.SNE(_V[_X], _KK, ref _PC);
+                        break;
+                    case (byte)InstructionsEnum.OPCodeHeaderEnum.SE_XY:
+                        instr.SE_XY(_V[_X], _V[_Y], ref _PC);
+                        break;
+                    case (byte)InstructionsEnum.OPCodeHeaderEnum.LD_CONST:
+                        instr.LD_CONST(ref _V[_X], _KK);
+                        break;
+                    case (byte)InstructionsEnum.OPCodeHeaderEnum.ADD_CONST:
+                        
+                        break;
+                    case (byte)InstructionsEnum.OPCodeHeaderEnum.LD_XY:
+                        
+                        break;
+                    case (byte)InstructionsEnum.OPCodeHeaderEnum.SNE_XY:
+                        
+                        break;
+                    
                 }
 
-
+                MessageBox.Show(_PC.ToString());
                 // Update
-
-                // on passe a l'instruction suivante
+                
                 
             }
         }
@@ -77,7 +108,9 @@ namespace GBEmul8.Chip8
 
         public ushort PC() { return _PC; }
 
-        public ushort SP() { return _SP; }
+        public Stack<ushort> SP() { return _SP; }
+
+  
 
         
 

@@ -21,7 +21,7 @@ namespace GBEmul8.Chip8
         ushort PC();
 
         // Stack Pointer
-        ushort SP();
+        Stack<ushort> SP();
 
         // Charge la ROM en mémoire
         bool LoadRom(byte[] rom);
