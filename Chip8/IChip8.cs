@@ -26,6 +26,8 @@ namespace GBEmul8.Chip8
         // Charge la ROM en mémoire
         bool LoadRom(byte[] rom);
 
+        // Execution de la ROM
+        void Start();
         
 
     }
