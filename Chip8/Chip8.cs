@@ -64,10 +64,10 @@ namespace GBEmul8.Chip8
                         instr.executeSyst(ref _PC, ref _SP);
                         break;
                     case (byte)InstructionsEnum.OPCodeHeaderEnum.JUMP:
-                        instr.Jump_Address(_NNN, ref _PC);
+                        instr.JUMPTO(_NNN, ref _PC);
                         break;
                     case (byte)InstructionsEnum.OPCodeHeaderEnum.CALL:
-                        instr.Call(_NNN, ref _PC, ref _SP);
+                        instr.CALL(_NNN, ref _PC, ref _SP);
                         break;
                     case (byte)InstructionsEnum.OPCodeHeaderEnum.SE_CONST:
                         instr.SE(_V[_X], _KK, ref _PC);
@@ -82,20 +82,62 @@ namespace GBEmul8.Chip8
                         instr.LD_CONST(ref _V[_X], _KK);
                         break;
                     case (byte)InstructionsEnum.OPCodeHeaderEnum.ADD_CONST:
-                        
+                        instr.ADD_CONST(ref _V[_X], _KK);
                         break;
                     case (byte)InstructionsEnum.OPCodeHeaderEnum.LD_XY:
-                        
+                        switch(_K)
+                        {                          
+                            case 0x1:
+                                instr.OR(ref _V[_X], ref _V[_Y]);
+                                break;
+                            case 0x2:                             
+                                instr.AND(ref _V[_X], ref _V[_Y]);
+                                break;
+                            case 0x3:
+                                instr.XOR(ref _V[_X], ref _V[_Y]);
+                                break;
+                            case 0x4:
+                                instr.ADD_XY(ref _V[_X], ref _V[_Y], ref _V[0xF]);
+                                break;
+                            case 0x5:
+                                instr.SUB_XY(ref _V[_X], ref _V[_Y], ref _V[0xF]);
+                                break;
+                            case 0x6:
+                                instr.SHR(ref _V[_X], ref _V[0xF]);
+                                break;
+                            case 0x7:
+                                instr.SUB_N(ref _V[_X], ref _V[_Y], ref _V[0xF]);
+                                break;
+                            case 0xE:
+                                instr.SHL(ref _V[_X], ref _V[0xF]);
+                                break;
+
+                        }               
                         break;
                     case (byte)InstructionsEnum.OPCodeHeaderEnum.SNE_XY:
+                        instr.SNE_XY(_V[_X], _V[_Y], ref _PC);
+                        break;
+                    case (byte)InstructionsEnum.OPCodeHeaderEnum.LD_ADDR:
+                        instr.LD_ADDR(ref _I, ref _NNN);
+                        break;
+                    case (byte)InstructionsEnum.OPCodeHeaderEnum.JUMP_ADDR:
+                        instr.JUMP_ADDR(ref _V[0x0],ref  _NNN, ref _PC);
+                        break;
+                    case (byte)InstructionsEnum.OPCodeHeaderEnum.RND:
+                        instr.RND(ref _V[_X], ref _KK);
+                        break;
+                    case (byte)InstructionsEnum.OPCodeHeaderEnum.DRAW:
+                        
+                        break;
+                    case (byte)InstructionsEnum.OPCodeHeaderEnum.SKIP:
                         
                         break;
                     
                 }
 
-                MessageBox.Show(_PC.ToString());
+            
                 // Update
-                
+                Console.WriteLine(_PC.ToString());
                 
             }
         }
