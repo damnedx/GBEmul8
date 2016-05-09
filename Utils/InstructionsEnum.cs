@@ -20,7 +20,13 @@ namespace GBEmul8.Utils
             LD_CONST = 0x6,
             ADD_CONST = 0x7,
             LD_XY = 0x8,
-            SNE_XY = 0x9
+            SNE_XY = 0x9,
+            LD_ADDR = 0xA,
+            JUMP_ADDR = 0xB,
+            RND = 0xC,
+            DRAW = 0xD,
+            SKIP = 0xE,
+
 
 
 
